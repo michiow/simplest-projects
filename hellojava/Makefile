@@ -1,12 +1,16 @@
+PROJECT = hello
+
 SRCDIR = src
-CLASSDIR = classes
+BUILDDIR = build
+CLASSDIR = $(BUILDDIR)/classes
+JARDIR = $(BUILDDIR)/jar
 
 CLASSES = com/michiow/hello/Hello.class \
 	  com/michiow/hello/HelloApp.class
 
 CLASSFILES = $(addprefix $(CLASSDIR)/, $(CLASSES))
 
-JAR = hello.jar
+JARFILE = $(JARDIR)/$(PROJECT).jar
 
 ENTRY = com.michiow.hello.HelloApp
 
@@ -21,13 +25,16 @@ all: $(CLASSFILES)
 $(CLASSFILES): | $(CLASSDIR)
 
 $(CLASSDIR):
-	mkdir $@
+	mkdir -p $@
 
 .PHONY: jar
-jar: $(JAR)
+jar: $(JARFILE)
 
-$(JAR): $(CLASSFILES)
+$(JARFILE): $(CLASSFILES) | $(JARDIR)
 	jar cfe $@ $(ENTRY) -C $(CLASSDIR) .
+
+$(JARDIR):
+	mkdir -p $@
 
 .PHONY: run
 run: $(CLASSFILES)
@@ -36,5 +43,5 @@ run: $(CLASSFILES)
 .PHONY: clean
 clean:
 	-rm -rf $(CLASSDIR)
-	-rm -f $(JAR)
+	-rm -f $(JARFILE)
 
